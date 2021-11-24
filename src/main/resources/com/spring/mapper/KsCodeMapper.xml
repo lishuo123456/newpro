@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+
+<mapper namespace="com.spring.dao.KsCodeDAO">
+
+
+
+
+	<select id="queryKsCode" resultType="com.spring.entity.KsCode">
+		select mzkscode,mzksname,py from mzhjsf.dbo.kscode
+	</select>
+
+	<select id="queryDoctorByKs" resultType="com.spring.entity.DctCode">
+		select dctcode,dctname from mzhjsf.dbo.dctcode where dctks = #{kscode}
+	</select>
+
+	<select id="queryMedicine" resultType="com.spring.entity.Medicine">
+		select b.ypcode,b.pm,b.gg,b.dw, (a.sl+a.sepsl*1.0/b.tomin) counts, a.dj, (select lbname from ykgl..lbstr where lbh='lb1' and lbcode=b.lb1) jx
+		from mzyf..kc a, ykgl.dbo.ymdm b where a.ypcode=b.ypcode and b.lb5 in('E1','E2','E3')
+	</select>
+
+
+	<select id="queryWJ" resultType="com.spring.entity.WJ">
+	select top ${pagetop} *
+	from (select row_number()
+	over(order by ypcode asc) as rownumber,*
+	from ykgl..ymdm ) temp_row
+	where rownumber>((#{pageno}-1)* #{pagesize});
+	</select>
+
+
+	<!--
+    <select id="queryAll" resultType="com.spring.entity.yyuser">
+		select * from gh.dbo.yyuser limit #{index},5
+	</select>
+
+    <select id="queryCount" resultType="int">
+		  select count(*) from product
+	</select>
+
+    <insert id="insert" parameterType="com.baizhi.entity.Product">
+		insert into product values (#{product_id},#{product_name},#{price},#{product_describe})
+	</insert>
+
+    <delete id="delete" parameterType="Product">
+		delete from product where product_id=#{product_id}
+	</delete>
+
+    <update id="update" parameterType="Product">
+		update product set product_name=#{product_name},price=#{price},product_describe=#{product_describe} where product_id=#{product_id}
+	</update>
+-->
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.spring.dao.BeHospitalizedDAO">
+
+
+
+
+	<select id="queryHospitalizedDetail" resultType="com.spring.entity.Inbase">
+		  select
+			  ( select sum(ncw6)
+			  from zyjs.dbo.basetmp
+			  where ncw1 = a.ncw1) zje,
+		  SUM(b.ncw7) yjjlj, a.ncw6 ryrq, a.ncw1 zyxh, c.dctname ysmc
+		  from zyjs.dbo.inbase a , zyjs.dbo.allbasesk b ,mzhjsf.dbo.dctcode c
+		  where a.ncw1 = b.ncw1
+		  and a.inzyys = c.dctcode
+		  and a.ncw1 = #{patid}
+		  and b.zwdate between #{ksrq} and #{jsrq}
+		  and b.jklb = 1
+		  group by a.ncw1, a.ncw6, c.dctname
+	</select>
+
+	<select id="queryHospitalizedDetailNorq" resultType="com.spring.entity.Inbase">
+		  select
+			  ( select sum(ncw6)
+			  from zyjs.dbo.basetmp
+			  where ncw1 = a.ncw1) zje,
+		  SUM(b.ncw7) yjjlj, a.ncw6 ryrq, a.ncw1 zyxh, c.dctname ysmc
+		  from zyjs.dbo.inbase a , zyjs.dbo.allbasesk b ,mzhjsf.dbo.dctcode c
+		  where a.ncw1 = b.ncw1
+		  and a.inzyys = c.dctcode
+		  and a.ncw1 = #{patid}
+		  and b.jklb = 1
+		  group by a.ncw1, a.ncw6, c.dctname
+	</select>
+
+
+
+	<!--
+        <select id="queryWJ" resultType="com.spring.entity.WJ">
+        select top ${pagetop} *
+        from (select row_number()
+        over(order by ypcode asc) as rownumber,*
+        from ykgl..ymdm ) temp_row
+        where rownumber>((#{pageno}-1)* #{pagesize});
+        </select>
+
+
+
+        <select id="queryAll" resultType="com.spring.entity.yyuser">
+            select * from gh.dbo.yyuser limit #{index},5
+        </select>
+
+        <select id="queryCount" resultType="int">
+              select count(*) from product
+        </select>
+
+        <insert id="insert" parameterType="com.baizhi.entity.Product">
+            insert into product values (#{product_id},#{product_name},#{price},#{product_describe})
+        </insert>
+
+        <delete id="delete" parameterType="Product">
+            delete from product where product_id=#{product_id}
+        </delete>
+
+        <update id="update" parameterType="Product">
+            update product set product_name=#{product_name},price=#{price},product_describe=#{product_describe} where product_id=#{product_id}
+        </update>
+    -->
+
+</mapper>
