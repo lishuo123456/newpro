@@ -1,5 +1,7 @@
 package com.spring.result;
 
+import java.util.Date;
+
 public class queryDoctorByKsSchedualBody {
 
     private String orgCode;

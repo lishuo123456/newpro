@@ -7,17 +7,19 @@
 
 
 	<select id="queryHospitalizedDetail" resultType="com.spring.entity.Inbase">
+		update
 		  select
 			  ( select sum(ncw6)
 			  from zyjs.dbo.basetmp
 			  where ncw1 = a.ncw1) zje,
 		  SUM(b.ncw7) yjjlj, a.ncw6 ryrq, a.ncw1 zyxh, c.dctname ysmc
-		  from zyjs.dbo.inbase a , zyjs.dbo.allbasesk b ,mzhjsf.dbo.dctcode c
+		  from zyjs.dbo.inbase a , zyjs.dbo.allbasesk b ,mzhjsf.dbo.dctcode c,zyjs.dbo.inbase0 d
 		  where a.ncw1 = b.ncw1
 		  and a.inzyys = c.dctcode
-		  and a.ncw1 = #{patid}
+		  and a.ncw1 = d.ncw1
 		  and b.zwdate between #{ksrq} and #{jsrq}
 		  and b.jklb = 1
+		  and d.patid = #{patid}
 		  group by a.ncw1, a.ncw6, c.dctname
 	</select>
 

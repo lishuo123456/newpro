@@ -10,17 +10,112 @@
 		select dctcode,dctname from mzhjsf.dbo.dctcode where dctks = #{ks}
 	</select>
 
-	<select id="queryDoctorGhDetail" resultType="com.spring.entity.DoctorGhDetail">
-		select dctcode,dctname,pzf+zjf amount from mzhjsf.dbo.dctcode where dctcode = #{dctcode} and dctks = #{ks}
-	</select>
-
 	<insert id="ghInGhbase" parameterType="com.spring.result.AppointmentGhBody">
-            insert into gh.dbo.ghbase (blid,zwname,sfz,ghks,ghdct,patid,timeStart,timeEnd,Tdate,pbmxid,Ttype,yyhx,tradingChannels,payNumber) values (13933779655,#{memberName},#{idcard},#{ksdm},#{ysdm},#{patid},#{timeStart},#{timeEnd},#{date},#{pbmxid},#{type},#{yyhx},#{tradingChannels},#{payNumber})
+
+		declare @blid int
+		begin tran
+		select @blid=MAX(cast(blid as int))+1 from gh..ghbase with (updlock)
+
+        insert into gh.dbo.ghbase (blid,zwname,sex,birthday,sfz,ghks,ghdct,patid,pbmxid)
+        values(@blid,#{zwname},#{sex},#{birthday},#{idcard},#{ksdm},#{ysdm},#{patid},#{yyhx})
+        commit
+
     </insert>
 
 	<insert id="ghInGhmx" parameterType="com.spring.result.AppointmentGhBody">
-            insert into gh.dbo.ghmx (ghid,ghdct,ghks,zwdate,sfmoney,patid,timeStart,timeEnd,Tdate,pbmxid,Ttype,yyhx,tradingChannels,payNumber) values (583188052,#{ysdm},#{ksdm},#{payTime},#{subFee},#{patid},#{timeStart},#{timeEnd},#{date},#{pbmxid},#{type},#{yyhx},#{tradingChannels},#{payNumber})
-    </insert>
+    insert into gh.dbo.ghmx (ghid,blid,ghdct,ghks,ghrq,ghf,gbf,zwdate,sfmoney,patid,pbmxid,payNumber)
+    values(#{ghid},#{blid},#{ysdm},#{ksdm},#{date},0.00,0.00,#{zwdate},#{subFee},#{patid},#{yyhx},#{payNumber})
+	</insert>
+
+	<select id="queryDoctorGhCount" resultType="com.spring.entity.DoctorGhCount">
+	select d.dctcode ysdm,d.dctname ysmc,b.ghtime,b.hycount,b.kghhyzs
+	from (
+	select *
+	from mzhjsf..dctcode
+	where dctks=#{ghks}) d
+
+			left join
+				(
+					select 20-COUNT(a.dctcode) kghhyzs,COUNT(a.dctcode) hycount,a.ghtime,a.dctname,a.dctcode
+					from gh.dbo.dctSChedual a
+					where a.ghks = #{ghks}
+					and a.ghtime = #{time}
+					group by a.ghtime,a.dctname,a.dctcode
+				) b
+				on d.dctcode=b.dctcode
+	</select>
+	<select id="queryDoctorGhDetail" resultType="com.spring.result.QueryDoctorGhDetail">
+	select a.dctcode ysdm,a.dctname ysmc,a.dctks ksdm,b.ghtime,b.pbmxid,b.hycount sy,a.pzf registrationFee from
+	(select dctcode,dctname,dctks,pzf from mzhjsf.dbo.dctcode where dctks=#{ghks} and dctcode=#{dctcode}) a
+	left join
+	(select dctcode,ghtime,pbmxid,10-COUNT(*) hycount from gh.dbo.dctSChedual where ghks = #{ghks} and dctcode = #{dctcode} and ghtime = #{time}  and ampm between #{startTime} and #{endTime} group by dctcode,ghtime,pbmxid) b
+	on a.dctcode = b.dctcode
+	</select>
+
+	<select id="queryDoctorGhSy" resultType="int">
+		select COUNT(*) from gh.dbo.dctSchedual where dctcode = #{ysdm} and ghks = #{ksdm} and ghtime = #{date} and ampm between #{timeStart} and #{timeEnd}
+	</select>
+
+	<select id="queryDctCodeById" resultType="com.spring.entity.DctCode">
+		select * from mzhjsf.dbo.dctcode where dctcode = #{dctcode}
+	</select>
+
+	<select id="queryPersonRegeistById" resultType="com.spring.entity.PersonRegeist">
+		select * from gh.dbo.PersonRegeist where patid = #{patid}
+	</select>
+	<insert id="ghInDctSchedual" parameterType="com.spring.result.AppointmentGhBody">
+	insert into gh.dbo.dctSchedual (dctcode,dctname,ghtime,patid,zwname,idcard,ghks,ampm,pbmxid)
+	values(#{ysdm},#{dctname},#{date},#{patid},#{zwname},#{idcard},#{ksdm},#{ghTime},#{yyhx})
+	</insert>
+
+	<insert id="insertGhmxByAG" parameterType="com.spring.entity.Ghmx">
+	insert into gh.dbo.ghmx (ghid,blid,ghdct,ghks,zwdate,sfmoney,patid,pbmxid,payNumber,zfrq,zfr)
+	values (#{ghid},#{blid},#{ghdct},#{ghks},#{zwdate},#{sfmoney},#{patid},#{pbmxid},#{payNumber},#{zfrq},#{zfr})
+	</insert>
+
+
+
+	<select id="queryBlid" resultType="java.lang.String">
+		  select blid  from gh.dbo.ghbase where pbmxid = #{yyhx} and patid = #{patid}
+	</select>
+
+	<select id="queryDctSchedual" resultType="com.spring.entity.DctSchedual">
+		  select * from gh.dbo.dctSchedual
+		  where dctcode = #{ysdm} and ghks = #{ksdm} and pbmxid = #{yyhx} and patid = #{patid} and ghtime = #{date}
+	</select>
+
+
+	<select id="queryKsCode" resultType="com.spring.entity.KsCode">
+		  select * from mzhjsf.dbo.kscode where mzkscode = #{ksdm}
+	</select>
+
+	<select id="queryGhmx" resultType="com.spring.entity.Ghmx">
+		  select * from gh.dbo.ghmx where pbmxid = #{yyhx} and patid = #{patid} and zwdate = #{zwdate} and zfrq is NULL and zfr is null
+	</select>
+
+	<select id="queryGhbase" resultType="com.spring.entity.Ghbase">
+		  select * from gh.dbo.ghbase where pbmxid = #{yyhx} and patid = #{patid}
+	</select>
+
+
+	<select id="AGQueryDctSchedual" resultType="com.spring.entity.DctSchedual">
+		  select * from gh.dbo.dctSchedual
+		  where dctcode = #{dctcode} and ghks = #{dctks} and pbmxid = #{yyhx} and patid = #{patid} and ghtime = #{date}
+	</select>
+
+	<delete id="deleteByAG" parameterType="com.spring.result.AbolishGhBody">
+            delete from gh.dbo.dctSchedual where dctcode = #{dctcode} and ghks = #{dctks} and pbmxid = #{yyhx} and patid = #{patid} and ghtime = #{date}
+    </delete>
+
+	<select id="queryGhmxByAG" resultType="com.spring.entity.Ghmx">
+		  select * from gh.dbo.ghmx where pbmxid = #{yyhx} and patid = #{patid} and zfrq is NULL and zfr is null
+	</select>
+
+	<update id="updateGhmxByAG" parameterType="com.spring.entity.Ghmx">
+			update gh.dbo.ghmx set zfrq = #{zfrq},zfr=#{zfr}
+			where ghid=#{ghid} and patid = #{patid} and pbmxid = #{pbmxid}
+    </update>
+
 
 	<!--
         <select id="queryWJ" resultType="com.spring.entity.WJ">

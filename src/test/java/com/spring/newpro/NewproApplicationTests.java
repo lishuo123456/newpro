@@ -1,5 +1,6 @@
 package com.spring.newpro;
 
+import com.spring.utils.TimeUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,22 +11,26 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 class NewproApplicationTests {
 
     @Test
     void contextLoads() throws NoSuchAlgorithmException {
-        String orgCode = "89003";
-        String salt  = "77889910";
-        String requesttime = "20211015152035";
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-        String s = DigestUtils.md5Hex(orgCode+requesttime+salt);
-        System.out.println(s);
+        int max = 59;
+        int min = 0;
+        Random random = new Random();
 
+        int s = random.nextInt(max)%(max-min+1) + min;
+        String s1 = String.valueOf(s);
+        String s2=s1;
+        if(s1.length()==1){
+            s2 = "0"+s1;
+        }
 
-
-
+        System.out.println(s2);
 
     }
 

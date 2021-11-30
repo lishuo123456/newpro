@@ -1,12 +1,14 @@
 package com.spring.controller;
 
 
-import com.spring.entity.DctCode;
-import com.spring.entity.KsCode;
-import com.spring.entity.Medicine;
-import com.spring.entity.WJ;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.spring.entity.*;
 import com.spring.result.*;
 import com.spring.service.KsCodeService;
+import com.spring.utils.AESCipher;
+import com.spring.utils.DataGet;
+import com.spring.utils.DataSet;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +24,20 @@ public class KsCodeController {
     @Autowired
     private KsCodeService ksCodeService;
 
+    private String key = "5c564342841efs21";
+
     @RequestMapping(value = "/queryKsCode",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-        public Object queryKsCode(@RequestBody KsCodeBody kscd) throws NoSuchAlgorithmException {
-        System.out.println(kscd);
+        public Object queryKsCode(@RequestBody DataGet data) throws NoSuchAlgorithmException {
+        String de = AESCipher.de(data.getData(), key);
+        JSONObject jsonObject = JSON.parseObject(de);
+        KsCodeBody kscd = jsonObject.toJavaObject(KsCodeBody.class);
+
+
+
+
+
+
         String salt = "77889910";
         String sign = kscd.getSign();
         MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -49,24 +61,40 @@ public class KsCodeController {
             result.setCode(1);
             result.setMessage("成功");
             result.setObject(list);
+            JSONObject jsonResult = (JSONObject) JSONObject.toJSON(result);
 
-
-            return result;
+            String datas = jsonResult.toJSONString();
+            String en = AESCipher.en(datas, key);
+            DataSet dataSet = new DataSet();
+            dataSet.setObject(en);
+            JSONObject jsonResults = (JSONObject) JSONObject.toJSON(dataSet);
+            return jsonResults;
         }else{
             Result result = new Result();
             result.setCode(0);
             result.setMessage("验签失败");
+            JSONObject jsonResult = (JSONObject) JSONObject.toJSON(result);
 
-
-            return result;
+            String datas = jsonResult.toJSONString();
+            String en = AESCipher.en(datas, key);
+            DataSet dataSet = new DataSet();
+            dataSet.setObject(en);
+            JSONObject jsonResults = (JSONObject) JSONObject.toJSON(dataSet);
+            return jsonResults;
         }
 
     }
 
     @RequestMapping(value = "/queryDoctorByKs",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Object queryDoctorByKs(@RequestBody DoctorByKsBody doctorByKsBody) throws NoSuchAlgorithmException {
-        System.out.println(doctorByKsBody);
+    public Object queryDoctorByKs(@RequestBody DataGet data) throws NoSuchAlgorithmException {
+        String de = AESCipher.de(data.getData(), key);
+        JSONObject jsonObject = JSON.parseObject(de);
+        DoctorByKsBody doctorByKsBody = jsonObject.toJavaObject(DoctorByKsBody.class);
+
+
+
+
         String salt = "77889910";
         String sign = doctorByKsBody.getSign();
         MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -91,25 +119,46 @@ public class KsCodeController {
                 result.setCode(1);
                 result.setMessage("成功");
                 result.setObject(list);
-                return result;
+                JSONObject jsonResult = (JSONObject) JSONObject.toJSON(result);
+
+                String datas = jsonResult.toJSONString();
+                String en = AESCipher.en(datas, key);
+                DataSet dataSet = new DataSet();
+                dataSet.setObject(en);
+                JSONObject jsonResults = (JSONObject) JSONObject.toJSON(dataSet);
+                return jsonResults;
             }else{
                 Result result = new Result();
                 result.setCode(1);
                 result.setMessage("成功");
                 result.setObject(list);
-                return result;
+                JSONObject jsonResult = (JSONObject) JSONObject.toJSON(result);
+
+                String datas = jsonResult.toJSONString();
+                String en = AESCipher.en(datas, key);
+                DataSet dataSet = new DataSet();
+                dataSet.setObject(en);
+                JSONObject jsonResults = (JSONObject) JSONObject.toJSON(dataSet);
+                return jsonResults;
             }
 
         }else{
             Result result = new Result();
             result.setCode(0);
             result.setMessage("验签失败");
-            return result;
+            JSONObject jsonResult = (JSONObject) JSONObject.toJSON(result);
+
+            String datas = jsonResult.toJSONString();
+            String en = AESCipher.en(datas, key);
+            DataSet dataSet = new DataSet();
+            dataSet.setObject(en);
+            JSONObject jsonResults = (JSONObject) JSONObject.toJSON(dataSet);
+            return jsonResults;
         }
 
     }
 
-    @RequestMapping(value = "/queryMedicine",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    /*@RequestMapping(value = "/queryMedicine",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Object queryMedicine(@RequestBody MedicineBody medicineBody) throws NoSuchAlgorithmException {
         System.out.println(medicineBody);
@@ -181,7 +230,7 @@ public class KsCodeController {
 
 
         return result;
-    }
+    }*/
 
 
 
