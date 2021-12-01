@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+
+    </head>
+    <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript">
+
+
+        function YJPB(){
+            var is = confirm("确定要为所有医生添加一个月排班吗");
+            if(is){
+                $.ajax({
+                    url:'http://localhost:8989/newpro/YJPB',
+                    type:'post',
+                    data:{},
+                    dataType:'json',
+                    success:function() {
+                        alert("一键排班成功");
+                        location.reload();
+                    },
+                    error:function(){
+                        alert('请求出错！');
+                    }
+                })
+            }
+        }
+        function PB(data){
+            var is = confirm("确定要为当前医生添加一个月排班吗");
+            if(is){
+                $.ajax({
+                    url:'http://localhost:8989/newpro/DCTPB',
+                    type:'GET',
+                    data:{dctcode:data},
+                    dataType:'json',
+                    success:function() {
+                        alert("排班成功");
+                        location.reload();
+                    },
+                    error:function(){
+                        alert('请求出错！');
+                    }
+                })
+            }
+        }
+
+        function QXPB(data){
+            var is = confirm("确定要为当前医生取消后续月排班吗");
+            if(is){
+                $.ajax({
+                    url:'http://localhost:8989/newpro/QXDCTPB',
+                    type:'GET',
+                    data:{dctcode:data},
+                    dataType:'json',
+                    success:function() {
+                        alert("取消排班成功");
+                        location.reload();
+                    },
+                    error:function(){
+                        alert('请求出错！');
+                    }
+                })
+            }
+        }
+
+    </script>
+    <style>
+        table,table tr td { border:1px solid #0094ff; }
+        table { text-align: center; border-collapse: collapse;width: 1000px;height: 92%}
+        #YJPB{width: 80px;height: 50px;margin-left: 20%}
+    </style>
+
+    <body>
+    <table class="layui-table" lay-skin="line" id="datas">
+
+        <tr>
+            <td>科室名称</td>
+            <td>医生代码</td>
+            <td>医生名称</td>
+            <td>挂号金额</td>
+            <td>排班</td>
+            <td>取消后续排班</td>
+        </tr>
+        <tr  th:each="DctCode:${dctSchedualsList}">
+            <td th:text="${DctCode.mzksname}"></td>
+            <td th:text="${DctCode.dctcode}"></td>
+            <td th:text="${DctCode.dctname}"></td>
+            <td th:text="${DctCode.pzf}"></td>
+            <td><a href="#" th:onclick="PB([[${DctCode.dctcode}]])">排班</a></td>
+            <td><a href="#" th:onclick="QXPB([[${DctCode.dctcode}]])">取消后续排班</a></td>
+
+        </tr>
+
+    </table>
+    <input id = "YJPB" type="button" value="一键排班" onclick="YJPB()"/>
+    </body>
+    </html>

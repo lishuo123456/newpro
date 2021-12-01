@@ -1,43 +1,18 @@
 package com.spring.entity;
 
-import java.io.Serializable;
+import lombok.Data;
 
-public class DctCode implements Serializable {
+@Data
+public class DctCode{
 
     private String dctcode;
 
     private String dctname;
 
+    private String dctks;
 
-    public String getDctcode() {
-        return dctcode;
-    }
+    private String pzf;
 
-    public void setDctcode(String dctcode) {
-        this.dctcode = dctcode;
-    }
+    private String mzksname;
 
-    public String getDctname() {
-        return dctname;
-    }
-
-    public void setDctname(String dctname) {
-        this.dctname = dctname;
-    }
-
-    public DctCode(String dctcode, String dctname) {
-        this.dctcode = dctcode;
-        this.dctname = dctname;
-    }
-
-    public DctCode() {
-    }
-
-    @Override
-    public String toString() {
-        return "DctCode{" +
-                "dctcode='" + dctcode + '\'' +
-                ", dctname='" + dctname + '\'' +
-                '}';
-    }
 }

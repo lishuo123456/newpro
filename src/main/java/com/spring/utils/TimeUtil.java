@@ -299,11 +299,15 @@ public class TimeUtil {
      * @return
      */
     public static Boolean isWeek(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+
+        Calendar cd=Calendar.getInstance();
+        cd.setTime(date);
+        int week=cd.get(Calendar.DAY_OF_WEEK)-1;
+        System.out.println(week);
+        if(week ==6 || week==0) {
             return true;
-        } else {
+        }else{
             return false;
         }
     }

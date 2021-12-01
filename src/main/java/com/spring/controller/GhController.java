@@ -13,14 +13,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @RestController
 public class GhController {
@@ -53,6 +51,17 @@ public class GhController {
             List<DoctorGhCount> list = new ArrayList<>();
             List<List> lists = new ArrayList<>();
             List<queryDoctorByKsSchedualResult> resultList = new ArrayList<>();
+
+            for(int i = 0;i<dateRangeData.size();i++){
+                if(TimeUtil.isWeek(sdf.parse(dateRangeData.get(i)))){
+                    System.out.println("__"+dateRangeData.get(i));
+                    dateRangeData.remove(dateRangeData.get(i));
+                }else{
+                    System.out.println(")))))))))))))"+dateRangeData.get(i));
+                }
+
+            }
+            System.out.println(dateRangeData);
 
             String status = "0";
             for(int i = 0; i< dateRangeData.size();i++){
@@ -177,6 +186,13 @@ public class GhController {
             Integer integer2 = TimeUtil.StringToTimestamp(queryDoctorGhDetailBody.getEndTime());
             List<String> dateRangeData = TimeUtil.getDateRangeData(integer, integer2);
             List<queryDoctorGhDetailResult> resultList = new ArrayList<>();
+
+            for(int i = 0;i<dateRangeData.size();i++){
+                if(TimeUtil.isWeek(sdf.parse(dateRangeData.get(i)))){
+                    dateRangeData.remove(dateRangeData.get(i));
+                }
+
+            }
 
             for(int i = 0;i <dateRangeData.size();i++){
                 UUID uuid = UUID.randomUUID();

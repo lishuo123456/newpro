@@ -1,14 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-</head>
+<html lang="en" style="background-color: skyblue" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $.ajax({
+                    url:'http://localhost:8989/newpro/Schedual',
+                    type:'post',
+                    data:{},
+                    dataType:'json',
+                    success:function(data) {
 
-<body>
-<form action="http://localhost:8989/newpro/Hello" method="post"></form>
-<input type="text" name="name" value="name">
-<input type="submit" value="点击">
-</body>
-</html>
+
+                        var child;
+                        for (var i = 0; i < data.length; i++) {
+                            var code = JSON.stringify(data[i]);
+
+                            child = "<tr>" + "<td>" + data[i].mzksname + "</td>"
+                                + "<td>" + data[i].dctcode + "</td>"
+                                + "<td>" + data[i].dctname + "</td>"
+                                + "<td>" + data[i].pzf + "</td>"
+                                + "<td>" + "<input type=\"button\" onclick=\"PB()\" value=\"排班\"/>" + "</td>"
+                                + "<td>" + "<input type=\"button\" value=\"取消后续排班\"/>" + "</tr>"
+
+                            //将信息追加
+                            $("#datas").append(child);
+                        }
+                    },
+                    error:function(){
+                        alert('请求出错！');
+                    }
+                })
+            });
+
+            function YJPB(){
+                var is = confirm("要为所有医生添加一个月排班吗");
+                if(is){
+                    $.ajax({
+                        url:'http://localhost:8989/newpro/YJPB',
+                        type:'post',
+                        data:{},
+                        dataType:'json',
+                        success:function() {
+                            alert("一键排班成功");
+                            location.reload();
+                        },
+                        error:function(){
+                            alert('请求出错！');
+                        }
+                    })
+                }
+            }
+
+            function PB(data){
+                alert();
+            }
+        </script>
+    </head>
+    <style>
+        table,table tr td { border:1px solid #0094ff; }
+        table { text-align: center; border-collapse: collapse;width: 1000px;}
+        #YJPB{width: 80px;height: 50px;margin-left: 20%}
+    </style>
+    <body>
+    <table class="layui-table" lay-skin="line" id="datas">
+
+        <tr>
+            <td>科室名称</td>
+            <td>医生代码</td>
+            <td>医生名称</td>
+            <td>挂号金额</td>
+            <td>排班</td>
+            <td>取消后续排班</td>
+        </tr>
+        <tr>
+            <td id="ksmc"></td>
+            <td id="ysdm"></td>
+            <td id="ysmc"></td>
+            <td id="pzf"></td>
+            <td id="Schedual"></td>
+            <td id="unSchedual"></td>
+
+        </tr>
+
+    </table>
+    <input id = "YJPB" type="button" value="一键排班" onclick="YJPB()"/>
+    </body>
+    </html>
